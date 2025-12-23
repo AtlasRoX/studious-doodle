@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import Intelligence Pro | BD</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.2);
+            --bg: #050507;
+            --card: #0f1115;
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --success: #10b981;
+            --danger: #f43f5e;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding: 40px 20px;
+            background-image: radial-gradient(circle at 50% -20%, #1e1b4b 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: left;
+            margin-bottom: 40px;
+            border-left: 4px solid var(--primary);
+            padding-left: 20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .header p {
+            color: var(--text-dim);
+            margin-top: 5px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 30px;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        h3 {
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 i {
+            color: var(--primary);
+        }
+
+        .input-row {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper span {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-dim);
+            font-size: 0.8rem;
+            pointer-events: none;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 14px 16px;
+            background: #16191f;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-glow);
+            background: #1c2028;
+        }
+
+        /* Hide number input spinners to prevent conflict with custom labels */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        .btn-analyze {
+            width: 100%;
+            padding: 18px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+        }
+
+        .btn-analyze:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 24px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        /* Results Display */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            transition: transform 0.3s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            display: block;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .metric-value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .health-section {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 25px;
+            border-radius: 24px;
+            margin-top: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .health-score {
+            font-size: 2.8rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .tag {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-left: 10px;
+        }
+
+        .tag-safe {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        .tag-risk {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--danger);
+        }
+
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        .breakdown-item span:first-child {
+            color: var(--text-dim);
+        }
+
+        @media (max-width: 900px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1>Import Intelligence <span style="color:var(--primary)">Pro</span></h1>
+            <p>Automated Cost & Profitability Matrix for BD Entrepreneurs</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>Core Variables</h3>
+                <div class="input-row">
+                    <label>Source Unit Price</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="unitPrice" placeholder="0.00">
+                        <span>BDT</span>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Import Quantity</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="quantity" placeholder="100">
+                        <span>Units</span>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Unit Weight</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="weight" step="0.01" value="0.50">
+                        <span>KG</span>
+                    </div>
+                </div>
+                <div class="input-row">
+                    <label>Local Market Price</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="marketPrice" placeholder="0.00">
+                        <span>BDT</span>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 30px;">Auto-Calc Settings</h3>
+                <div class="input-row">
+                    <label>Marketing Intensity</label>
+                    <select id="mktIntensity">
+                        <option value="100">Standard (100 CPA)</option>
+                        <option value="180">Aggressive (180 CPA)</option>
+                        <option value="50">Organic/Low (50 CPA)</option>
+                    </select>
+                </div>
+                <div class="input-row">
+                    <label>Shipping / KG</label>
+                    <div class="input-wrapper">
+                        <input type="number" id="shipRate" value="750">
+                        <span>BDT</span>
+                    </div>
+                </div>
+
+                <button class="btn-analyze" onclick="calculate()">Analyze Profitability</button>
+            </div>
+
+            <div class="card" id="results">
+                <div style="text-align: center; padding: 120px 0; color: var(--text-dim);">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        style="margin-bottom: 20px; opacity: 0.3;">
+                        <path
+                            d="M21 12V7C21 5.89543 20.1046 5 19 5H5C3.89543 5 3 5.89543 3 7V17C3 18.1046 3.89543 19 5 19H12"
+                            stroke-linecap="round" />
+                        <circle cx="18" cy="18" r="3" />
+                    </svg>
+                    <p>Enter data and run analysis to see insights.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function calculate() {
+            // User Inputs
+            const up = parseFloat(document.getElementById('unitPrice').value) || 0;
+            const qty = parseFloat(document.getElementById('quantity').value) || 0;
+            const weight = parseFloat(document.getElementById('weight').value) || 0;
+            const marketPrice = parseFloat(document.getElementById('marketPrice').value) || 0;
+            const shipRate = parseFloat(document.getElementById('shipRate').value) || 750;
+            const cpa = parseFloat(document.getElementById('mktIntensity').value) || 100;
+
+            if (!up || !qty || !marketPrice) { alert("Please fill core fields"); return; }
+
+            // 1. Auto-Packaging Logic: ৳20 base + ৳10 per KG for extra padding
+            const packingPerUnit = 20 + (weight * 10);
+
+            // 2. Shipping Logic
+            const totalShipping = qty * weight * shipRate;
+
+            // 3. Marketing Logic
+            const totalMarketing = qty * cpa;
+
+            // 4. Totals
+            const totalProductCost = up * qty;
+            const totalPackaging = packingPerUnit * qty;
+
+            const totalInvestment = totalProductCost + totalShipping + totalMarketing + totalPackaging;
+            const landingCostPerUnit = totalInvestment / qty;
+
+            const totalRevenue = marketPrice * qty;
+            const netProfit = totalRevenue - totalInvestment;
+            const margin = (netProfit / totalRevenue) * 100;
+            const roi = (netProfit / totalInvestment) * 100;
+
+            const healthColor = margin > 25 ? 'var(--success)' : margin > 10 ? 'var(--warning)' : 'var(--danger)';
+            const healthText = margin > 25 ? 'Elite' : margin > 10 ? 'Stable' : 'High Risk';
+
+            document.getElementById('results').innerHTML = `
+                <h3>Live Intelligence Report</h3>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <span class="metric-label">Landing / Unit</span>
+                        <div class="metric-value">৳${landingCostPerUnit.toFixed(0)}</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">Total Net Profit</span>
+                        <div class="metric-value" style="color:${healthColor}">৳${netProfit.toLocaleString()}</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">ROI</span>
+                        <div class="metric-value">${roi.toFixed(1)}%</div>
+                    </div>
+                </div>
+
+                <div class="health-section">
+                    <div>
+                        <div class="health-score" style="color:${healthColor}">${margin.toFixed(0)}%</div>
+                        <div style="font-size: 0.75rem; color: var(--text-dim); text-transform:uppercase; letter-spacing:1px;">Net Margin</div>
+                    </div>
+                    <div style="flex-grow: 1">
+                        <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                            <strong style="font-size: 1.1rem;">Verdict: ${healthText}</strong>
+                            <span class="tag ${margin > 15 ? 'tag-safe' : 'tag-risk'}">${margin > 15 ? 'GREEN LIGHT' : 'ADJUST PRICING'}</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.4;">
+                            ${margin > 25
+                    ? "Excellent deal. You can afford a high return (RTO) rate and still remain profitable."
+                    : "Warning: Your margins are thin. If more than 10% of customers return products, you will lose money."}
+                        </p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h3 style="font-size: 0.8rem;">Cost Breakdown (Per Unit)</h3>
+                    <div class="breakdown-item"><span>Factory Price:</span> <strong>৳${up}</strong></div>
+                    <div class="breakdown-item"><span>Shipping Cost:</span> <strong>৳${(totalShipping / qty).toFixed(0)}</strong></div>
+                    <div class="breakdown-item"><span>Marketing (Auto):</span> <strong>৳${cpa}</strong></div>
+                    <div class="breakdown-item"><span>Packaging (Auto):</span> <strong>৳${packingPerUnit.toFixed(0)}</strong></div>
+                </div>
+
+                <div style="margin-top: 25px; padding: 15px; background: rgba(255,158,11,0.1); border-radius: 12px; font-size: 0.85rem; color: var(--warning); border: 1px solid rgba(255,158,11,0.2);">
+                    <strong>💡 Intelligence Note:</strong> Total weight of your shipment is <b>${(qty * weight).toFixed(1)} KG</b>. Ensure your courier doesn't charge you based on Volumetric Weight (Size) if the box is large but light.
+                </div>
+            `;
+        }
+    </script>
+</body>
+
+</html>
