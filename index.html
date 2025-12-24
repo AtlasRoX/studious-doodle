@@ -174,6 +174,13 @@
             margin-bottom: 25px;
         }
 
+        .metrics-grid-full {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
         .metric-card {
             background: rgba(255, 255, 255, 0.02);
             padding: 20px;
@@ -248,9 +255,216 @@
             color: var(--text-dim);
         }
 
+        /* ===== MOBILE RESPONSIVE DESIGN ===== */
+
+        /* Tablets and Small Laptops (≤900px) */
         @media (max-width: 900px) {
             .dashboard-grid {
                 grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr) !important;
+            }
+        }
+
+        /* Large Phones / Small Tablets (≤640px) */
+        @media (max-width: 640px) {
+            body {
+                padding: 20px 12px;
+            }
+
+            .header {
+                padding-left: 15px;
+                margin-bottom: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.6rem;
+            }
+
+            .header p {
+                font-size: 0.85rem;
+            }
+
+            .dashboard-grid {
+                gap: 20px;
+            }
+
+            .card {
+                padding: 20px;
+                border-radius: 18px;
+            }
+
+            h3 {
+                font-size: 0.8rem;
+                margin-bottom: 18px;
+            }
+
+            .input-row {
+                margin-bottom: 16px;
+            }
+
+            label {
+                font-size: 0.8rem;
+            }
+
+            input,
+            select {
+                padding: 12px 14px;
+                font-size: 0.95rem;
+            }
+
+            .btn-analyze {
+                padding: 16px;
+                font-size: 0.95rem;
+            }
+
+            /* Metrics Grid - 2 columns on mobile */
+            .metrics-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px;
+            }
+
+            .metric-card {
+                padding: 16px;
+            }
+
+            .metric-label {
+                font-size: 0.7rem;
+            }
+
+            .metric-value {
+                font-size: 1.3rem;
+            }
+
+            /* Customer Delivery Pricing - Stack on mobile */
+            .customer-pricing-grid {
+                grid-template-columns: 1fr !important;
+                gap: 10px;
+            }
+
+            /* Health Section */
+            .health-section {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .health-score {
+                font-size: 2.2rem;
+            }
+
+            /* AI Panel */
+            .ai-score-grid {
+                grid-template-columns: 1fr !important;
+                text-align: center;
+            }
+
+            /* How AI Works - Make more compact */
+            details {
+                font-size: 0.85rem;
+            }
+
+            summary {
+                font-size: 0.8rem !important;
+            }
+
+            /* Break-even grid - Single column */
+            .metrics-grid-full {
+                grid-template-columns: 1fr !important;
+            }
+
+            /* Cost breakdown bars */
+            .cost-bar-label {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 4px;
+            }
+        }
+
+        /* Small Phones (≤480px) */
+        @media (max-width: 480px) {
+            body {
+                padding: 15px 10px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+                letter-spacing: -0.5px;
+            }
+
+            .header p {
+                font-size: 0.8rem;
+            }
+
+            .card {
+                padding: 16px;
+                border-radius: 16px;
+            }
+
+            h3 {
+                font-size: 0.75rem;
+                letter-spacing: 1.5px;
+            }
+
+            input,
+            select {
+                font-size: 0.9rem;
+                padding: 11px 12px;
+            }
+
+            .btn-analyze {
+                padding: 14px;
+                font-size: 0.9rem;
+            }
+
+            .metric-value {
+                font-size: 1.2rem;
+            }
+
+            .health-score {
+                font-size: 2rem;
+            }
+
+            .tag {
+                font-size: 0.65rem;
+                padding: 5px 10px;
+            }
+
+            /* Make touch targets larger */
+            summary {
+                padding: 8px;
+                margin: -8px;
+            }
+
+            /* Reduce spacing in tight layouts */
+            .breakdown-item {
+                padding: 10px 0;
+                font-size: 0.85rem;
+            }
+        }
+
+        /* Very Small Phones (≤360px) */
+        @media (max-width: 360px) {
+            .header h1 {
+                font-size: 1.25rem;
+            }
+
+            .metric-value {
+                font-size: 1.1rem;
+            }
+
+            .health-score {
+                font-size: 1.8rem;
+            }
+
+            h3 {
+                font-size: 0.7rem;
             }
         }
     </style>
@@ -313,6 +527,16 @@
                     </div>
                 </div>
 
+                <h3 style="margin-top: 30px;">🚚 Customer Delivery</h3>
+                <div class="input-row">
+                    <label>Delivery Zone</label>
+                    <select id="deliveryZone">
+                        <option value="mixed">Mixed (60% Dhaka / 40% Outside)</option>
+                        <option value="80">Inside Dhaka Only (৳80)</option>
+                        <option value="130">Outside Dhaka Only (৳130)</option>
+                    </select>
+                </div>
+
                 <button class="btn-analyze" onclick="calculate()">Analyze Profitability</button>
             </div>
 
@@ -332,6 +556,209 @@
     </div>
 
     <script>
+        // ===== AI INTELLIGENCE ENGINE =====
+        function generateAIInsights(data) {
+            const {
+                up, qty, weight, marketPrice, shipRate, cpa,
+                totalInvestment, landingCostPerUnit, margin, roi,
+                profitPerUnit, maxReturnRate, productCostPct, shippingPct,
+                marketingPct, packagingPct, totalRevenue, netProfit
+            } = data;
+
+            const recommendations = [];
+            const optimizations = [];
+            let opportunityScore = 50; // Base score
+            let verdict = '';
+            let summary = '';
+            let scoreColor = 'var(--warning)';
+
+            // === AI SCORING ALGORITHM ===
+            // Factor 1: Margin Quality (0-30 points)
+            if (margin > 40) opportunityScore += 30;
+            else if (margin > 25) opportunityScore += 20;
+            else if (margin > 15) opportunityScore += 10;
+            else if (margin > 5) opportunityScore += 0;
+            else opportunityScore -= 20;
+
+            // Factor 2: ROI Strength (0-25 points)
+            if (roi > 100) opportunityScore += 25;
+            else if (roi > 50) opportunityScore += 15;
+            else if (roi > 25) opportunityScore += 8;
+            else if (roi > 0) opportunityScore += 0;
+            else opportunityScore -= 15;
+
+            // Factor 3: Return Tolerance (0-20 points)
+            if (maxReturnRate > 30) opportunityScore += 20;
+            else if (maxReturnRate > 20) opportunityScore += 15;
+            else if (maxReturnRate > 10) opportunityScore += 8;
+            else opportunityScore -= 10;
+
+            // Factor 4: Investment Efficiency (0-15 points)
+            const priceToLandingRatio = marketPrice / landingCostPerUnit;
+            if (priceToLandingRatio > 2.5) opportunityScore += 15;
+            else if (priceToLandingRatio > 2.0) opportunityScore += 10;
+            else if (priceToLandingRatio > 1.5) opportunityScore += 5;
+            else opportunityScore -= 5;
+
+            // Factor 5: Cost Structure (0-10 points)
+            if (shippingPct < 20 && marketingPct < 15) opportunityScore += 10;
+            else if (shippingPct < 30 && marketingPct < 25) opportunityScore += 5;
+            else if (shippingPct > 40 || marketingPct > 35) opportunityScore -= 10;
+
+            // Clamp score between 0-100
+            opportunityScore = Math.max(0, Math.min(100, opportunityScore));
+
+            // === VERDICT & SUMMARY ===
+            if (opportunityScore >= 80) {
+                verdict = '🚀 Exceptional Opportunity';
+                summary = 'AI analysis indicates this is a highly profitable deal with strong margins and excellent risk tolerance. This product has outstanding market potential.';
+                scoreColor = 'var(--success)';
+            } else if (opportunityScore >= 65) {
+                verdict = '💎 Strong Opportunity';
+                summary = 'Solid business case with healthy margins and good ROI. Minor optimizations could enhance profitability further.';
+                scoreColor = 'var(--success)';
+            } else if (opportunityScore >= 50) {
+                verdict = '⚖️ Moderate Potential';
+                summary = 'This deal is viable but requires careful execution. Monitor costs closely and consider optimization strategies.';
+                scoreColor = 'var(--warning)';
+            } else if (opportunityScore >= 30) {
+                verdict = '⚠️ High Risk';
+                summary = 'Significant concerns detected. Margins are thin and risk tolerance is low. Strong optimization needed before proceeding.';
+                scoreColor = 'var(--danger)';
+            } else {
+                verdict = '🚨 Critical Risk';
+                summary = 'AI strongly advises against this deal in its current form. Major restructuring or complete reconsideration recommended.';
+                scoreColor = 'var(--danger)';
+            }
+
+            // === SMART RECOMMENDATIONS ===
+
+            // Pricing Recommendations
+            if (margin < 15) {
+                const recommendedPrice = Math.ceil(landingCostPerUnit * 1.4); // 40% margin target
+                recommendations.push({
+                    type: 'danger',
+                    title: 'Pricing Alert',
+                    message: `Your ${margin.toFixed(1)}% margin is risky. AI recommends increasing selling price to ৳${recommendedPrice} for a safer 40% margin.`
+                });
+            } else if (margin > 50 && marketPrice < landingCostPerUnit * 3) {
+                recommendations.push({
+                    type: 'success',
+                    title: 'Premium Pricing Opportunity',
+                    message: `Your strong margins suggest room for competitive pricing. You could reduce price by 10-15% to capture more market share while maintaining healthy profits.`
+                });
+            }
+
+            // Quantity Optimization
+            if (qty < 50) {
+                const betterQty = Math.ceil(qty * 1.5);
+                const projectedSavings = Math.round((totalInvestment / qty) * 0.05 * betterQty); // Assume 5% savings on scale
+                recommendations.push({
+                    type: 'warning',
+                    title: 'Scale Efficiency',
+                    message: `Ordering ${betterQty} units instead of ${qty} could reduce per-unit costs through better shipping economics and potential supplier discounts.`
+                });
+            }
+
+            // Shipping Optimization
+            if (shippingPct > 30) {
+                recommendations.push({
+                    type: 'warning',
+                    title: 'Shipping Cost Alert',
+                    message: `Shipping represents ${shippingPct.toFixed(1)}% of your investment. Consider bulk shipping, consolidation services, or negotiating better rates with couriers.`
+                });
+                optimizations.push(`Negotiate bulk shipping rates - potential 15-25% savings on logistics`);
+                optimizations.push(`Explore sea freight for large volumes (${(qty * weight).toFixed(0)} KG total)`);
+            }
+
+            // Marketing Optimization
+            if (marketingPct > 25) {
+                recommendations.push({
+                    type: 'warning',
+                    title: 'Marketing Cost Warning',
+                    message: `Marketing costs are high (${marketingPct.toFixed(1)}%). Focus on organic growth, influencer partnerships, or lower-cost acquisition channels.`
+                });
+                optimizations.push(`Test organic social media marketing to reduce CPA from ৳${cpa}`);
+                optimizations.push(`Implement referral program to lower customer acquisition costs`);
+            } else if (margin > 30 && marketingPct < 15) {
+                recommendations.push({
+                    type: 'success',
+                    title: 'Growth Opportunity',
+                    message: `Your healthy margins allow for increased marketing spend. Consider scaling up to 20% marketing budget to accelerate growth.`
+                });
+                optimizations.push(`Scale marketing spend to capture larger market share with your strong margins`);
+            }
+
+            // Product Cost Optimization
+            if (productCostPct > 60) {
+                optimizations.push(`Negotiate supplier pricing - even 5% reduction saves ৳${Math.round(up * qty * 0.05)}`);
+                optimizations.push(`Consider alternative suppliers or bulk ordering for better unit economics`);
+            }
+
+            // ROI Insights
+            if (roi > 80) {
+                recommendations.push({
+                    type: 'success',
+                    title: 'Exceptional ROI',
+                    message: `${roi.toFixed(0)}% ROI is outstanding. This deal offers excellent capital efficiency. Consider reinvesting profits for rapid scaling.`
+                });
+            } else if (roi < 20 && roi > 0) {
+                recommendations.push({
+                    type: 'warning',
+                    title: 'Low ROI Concern',
+                    message: `${roi.toFixed(1)}% ROI is below industry average. Your capital could potentially earn better returns elsewhere unless you can optimize costs.`
+                });
+            }
+
+            // Return Rate Analysis
+            if (maxReturnRate < 10) {
+                recommendations.push({
+                    type: 'danger',
+                    title: 'Return Risk Critical',
+                    message: `You can only afford ${maxReturnRate.toFixed(1)}% returns. Ensure product quality is exceptional and descriptions are accurate to minimize RTO rates.`
+                });
+                optimizations.push(`Invest in quality control and accurate product descriptions to minimize returns`);
+            } else if (maxReturnRate > 25) {
+                recommendations.push({
+                    type: 'success',
+                    title: 'Strong Return Buffer',
+                    message: `Your ${maxReturnRate.toFixed(1)}% return tolerance provides excellent safety margin. You can experiment with broader audience targeting.`
+                });
+            }
+
+            // Weight-based Insights
+            const totalWeight = qty * weight;
+            if (totalWeight > 100 && shippingPct > 25) {
+                optimizations.push(`Heavy shipment (${totalWeight.toFixed(0)} KG) - explore cargo shipping for 30-40% savings`);
+            }
+
+            // Profit Per Unit Insights
+            if (profitPerUnit < 50 && qty > 20) {
+                recommendations.push({
+                    type: 'warning',
+                    title: 'Low Unit Economics',
+                    message: `Only ৳${profitPerUnit.toFixed(0)} profit per unit. With ${qty} units, one quality issue could wipe out profits. Consider higher-margin alternatives.`
+                });
+            }
+
+            // Investment Size Risk
+            if (totalInvestment > 200000 && margin < 20) {
+                recommendations.push({
+                    type: 'danger',
+                    title: 'High Capital Risk',
+                    message: `৳${totalInvestment.toLocaleString()} investment with only ${margin.toFixed(1)}% margin is high-risk. Consider testing with smaller quantities first.`
+                });
+            }
+
+            return {
+                opportunityScore: opportunityScore.toFixed(0),
+                verdict,
+                summary,
+                scoreColor,
+                recommendations,
+                optimizations
+            };
+        }
         function calculate() {
             // User Inputs
             const up = parseFloat(document.getElementById('unitPrice').value) || 0;
@@ -340,8 +767,20 @@
             const marketPrice = parseFloat(document.getElementById('marketPrice').value) || 0;
             const shipRate = parseFloat(document.getElementById('shipRate').value) || 750;
             const cpa = parseFloat(document.getElementById('mktIntensity').value) || 100;
+            const deliveryZone = document.getElementById('deliveryZone').value;
 
             if (!up || !qty || !marketPrice) { alert("Please fill core fields"); return; }
+
+            // Delivery Cost Calculation
+            let avgDeliveryCost = 0;
+            if (deliveryZone === 'mixed') {
+                avgDeliveryCost = (0.6 * 80) + (0.4 * 130); // 60% Dhaka, 40% Outside = ৳100 avg
+            } else {
+                avgDeliveryCost = parseFloat(deliveryZone);
+            }
+            const customerPrice = marketPrice + avgDeliveryCost; // What customer actually pays
+            const insideDhakaPrice = marketPrice + 80; // Customer price for Inside Dhaka
+            const outsideDhakaPrice = marketPrice + 130; // Customer price for Outside Dhaka
 
             // 1. Auto-Packaging Logic: ৳20 base + ৳10 per KG for extra padding
             const packingPerUnit = 20 + (weight * 10);
@@ -352,69 +791,546 @@
             // 3. Marketing Logic
             const totalMarketing = qty * cpa;
 
-            // 4. Totals
+            // 4. Cost Components
             const totalProductCost = up * qty;
             const totalPackaging = packingPerUnit * qty;
 
+            // 5. Investment & Revenue
             const totalInvestment = totalProductCost + totalShipping + totalMarketing + totalPackaging;
             const landingCostPerUnit = totalInvestment / qty;
+            const totalRevenue = customerPrice * qty; // Revenue includes delivery charges
 
-            const totalRevenue = marketPrice * qty;
+            // 6. Profitability Metrics
             const netProfit = totalRevenue - totalInvestment;
+            const profitPerUnit = netProfit / qty;
             const margin = (netProfit / totalRevenue) * 100;
             const roi = (netProfit / totalInvestment) * 100;
 
+            // 7. Break-even Analysis
+            const breakEvenPrice = landingCostPerUnit; // Minimum price to not lose money
+            const breakEvenUnits = totalInvestment / marketPrice; // Units needed to break even at current price
+
+            // 8. Return Tolerance (RTO/Return to Origin)
+            const maxAffordableReturns = margin > 0 ? Math.floor((netProfit / landingCostPerUnit)) : 0;
+            const maxReturnRate = maxAffordableReturns > 0 ? ((maxAffordableReturns / qty) * 100) : 0;
+
+            // 9. Cost Distribution Percentages
+            const productCostPct = (totalProductCost / totalInvestment) * 100;
+            const shippingPct = (totalShipping / totalInvestment) * 100;
+            const marketingPct = (totalMarketing / totalInvestment) * 100;
+            const packagingPct = (totalPackaging / totalInvestment) * 100;
+
+            // 10. Health Assessment
             const healthColor = margin > 25 ? 'var(--success)' : margin > 10 ? 'var(--warning)' : 'var(--danger)';
             const healthText = margin > 25 ? 'Elite' : margin > 10 ? 'Stable' : 'High Risk';
 
+            // ===== AI ANALYSIS ENGINE =====
+            const aiAnalysis = generateAIInsights({
+                up, qty, weight, marketPrice, shipRate, cpa,
+                totalInvestment, landingCostPerUnit, margin, roi,
+                profitPerUnit, maxReturnRate, productCostPct, shippingPct,
+                marketingPct, packagingPct, totalRevenue, netProfit
+            });
+
             document.getElementById('results').innerHTML = `
-                <h3>Live Intelligence Report</h3>
+                <!-- SAVE/COMPARE TOOLBAR -->
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;">
+                    <button onclick="saveScenario()" style="padding: 10px 18px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;">
+                        💾 Save This Scenario
+                    </button>
+                    <button onclick="toggleComparison()" style="padding: 10px 18px; background: rgba(99, 102, 241, 0.15); color: var(--primary); border: 1px solid var(--primary); border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;">
+                        📊 Compare Saved (<span id="savedCount">0</span>)
+                    </button>
+                    <button onclick="clearSaved()" style="padding: 10px 18px; background: rgba(244, 63, 94, 0.1); color: var(--danger); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 10px; font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;">
+                        🗑️ Clear All
+                    </button>
+                </div>
+
+                <!-- COMPARISON TABLE (Hidden by default) -->
+                <div id="comparisonSection" style="display: none; margin-bottom: 25px; background: rgba(99, 102, 241, 0.05); padding: 20px; border-radius: 16px; border: 1px solid rgba(99, 102, 241, 0.2); overflow-x: auto;">
+                    <h3 style="font-size: 0.9rem; margin-bottom: 15px;">📊 Saved Scenarios Comparison</h3>
+                    <div id="comparisonTable"></div>
+                </div>
+
+                <h3>📊 Complete Financial Overview</h3>
+
+                <!-- QUICK EXECUTIVE SUMMARY -->
+                <div style="background: linear-gradient(135deg, ${healthColor === 'var(--success)' ? 'rgba(16, 185, 129, 0.15)' : healthColor === 'var(--warning)' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(244, 63, 94, 0.15)'}, rgba(99, 102, 241, 0.1)); padding: 25px; border-radius: 20px; border: 2px solid ${healthColor}; margin-bottom: 25px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
+                        <div>
+                            <div style="font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px;">⚡ Quick Decision</div>
+                            <div style="font-size: 1.8rem; font-weight: 800; color: ${healthColor}; line-height: 1.2;">${healthText}</div>
+                        </div>
+                        <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 3px;">PROFIT</div>
+                                <div style="font-size: 1.4rem; font-weight: 700; color: ${netProfit > 0 ? 'var(--success)' : 'var(--danger)'};">${netProfit > 0 ? '+' : ''}৳${Math.round(netProfit).toLocaleString()}</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 3px;">MARGIN</div>
+                                <div style="font-size: 1.4rem; font-weight: 700; color: ${healthColor};">${margin.toFixed(1)}%</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 0.7rem; color: var(--text-dim); margin-bottom: 3px;">ROI</div>
+                                <div style="font-size: 1.4rem; font-weight: 700; color: ${roi > 50 ? 'var(--success)' : roi > 20 ? 'var(--warning)' : 'var(--danger)'};">${roi.toFixed(0)}%</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="padding: 12px; background: rgba(0,0,0,0.2); border-radius: 10px; font-size: 0.85rem; line-height: 1.6;">
+                        <strong>💡 Bottom Line:</strong> ${margin > 25 ? `Strong deal with ${margin.toFixed(0)}% margins. You can afford ${maxAffordableReturns} returns (${maxReturnRate.toFixed(0)}%) and still profit. ✅ Recommended to proceed.` :
+                    margin > 15 ? `Workable margins at ${margin.toFixed(0)}%. Watch return rates carefully - max ${maxAffordableReturns} returns (${maxReturnRate.toFixed(0)}%). ⚠️ Proceed with caution.` :
+                        `Risky with only ${margin.toFixed(0)}% margin. Can afford just ${maxAffordableReturns} returns (${maxReturnRate.toFixed(0)}%). 🚨 Consider price increase or cost reduction.`
+                }
+                    </div>
+                </div>
                 
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <span class="metric-label">Landing / Unit</span>
-                        <div class="metric-value">৳${landingCostPerUnit.toFixed(0)}</div>
+                <!-- PRIMARY METRICS: 6-Card Grid -->
+                <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+                    <div class="metric-card" style="background: rgba(99, 102, 241, 0.1); border-color: var(--primary);">
+                        <span class="metric-label">💰 Total Investment</span>
+                        <div class="metric-value" style="color: var(--primary);">৳${totalInvestment.toLocaleString()}</div>
                     </div>
-                    <div class="metric-card">
-                        <span class="metric-label">Total Net Profit</span>
+                    <div class="metric-card" style="background: rgba(16, 185, 129, 0.1); border-color: var(--success);">
+                        <span class="metric-label">📈 Total Revenue</span>
+                        <div class="metric-value" style="color: var(--success);">৳${totalRevenue.toLocaleString()}</div>
+                    </div>
+                    <div class="metric-card" style="background: ${margin > 0 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(244, 63, 94, 0.1)'}; border-color: ${healthColor};">
+                        <span class="metric-label">💵 Net Profit</span>
                         <div class="metric-value" style="color:${healthColor}">৳${netProfit.toLocaleString()}</div>
-                    </div>
-                    <div class="metric-card">
-                        <span class="metric-label">ROI</span>
-                        <div class="metric-value">${roi.toFixed(1)}%</div>
                     </div>
                 </div>
 
-                <div class="health-section">
+                <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div class="metric-card">
+                        <span class="metric-label">🏷️ Profit / Unit</span>
+                        <div class="metric-value" style="color:${profitPerUnit > 0 ? 'var(--success)' : 'var(--danger)'}">${profitPerUnit > 0 ? '+' : ''}৳${profitPerUnit.toFixed(0)}</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">📦 Landing Cost / Unit</span>
+                        <div class="metric-value">৳${landingCostPerUnit.toFixed(0)}</div>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-label">📊 ROI</span>
+                        <div class="metric-value" style="color:${roi > 50 ? 'var(--success)' : roi > 20 ? 'var(--warning)' : 'var(--danger)'}">${roi.toFixed(1)}%</div>
+                    </div>
+                </div>
+
+                <!-- CUSTOMER DELIVERY PRICING -->
+                <div style="margin-top: 20px; background: rgba(99, 102, 241, 0.08); padding: 20px; border-radius: 18px; border: 1px solid rgba (99, 102, 241, 0.2);">
+                    <h3 style="font-size: 0.85rem; margin-bottom: 15px; color: var(--primary);">🚚 Customer Pricing (with Delivery)</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+                        <div style="text-align: center; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 12px;">
+                            <div style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px;">Product Price</div>
+                            <div style="font-size: 1.3rem; font-weight: 700; color: var(--text-main);">৳${marketPrice}</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 12px;">
+                            <div style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px;">+ Delivery</div>
+                            <div style="font-size: 1.3rem; font-weight: 700; color: var(--warning);">৳${avgDeliveryCost.toFixed(0)}</div>
+                            <div style="font-size: 0.65rem; color: var(--text-dim); margin-top: 2px;">${deliveryZone === 'mixed' ? '(60% Dhaka/40% Outside)' : deliveryZone === '80' ? '(Inside Dhaka)' : '(Outside Dhaka)'}</div>
+                        </div>
+                        <div style="text-align: center; padding: 12px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.15)); border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.3);">
+                            <div style="font-size: 0.75rem; color: var(--text-dim); margin-bottom: 4px;">= Customer Pays</div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">৳${customerPrice.toFixed(0)}</div>
+                        </div>
+                    </div>
+                    ${deliveryZone === 'mixed' ? `
+                        <div style="margin-top: 12px; padding: 10px; background: rgba(245, 158, 11, 0.08); border-radius: 8px; border-left: 3px solid var(--warning); font-size: 0.8rem; color: var(--text-dim);">
+                            💡 <strong>Delivery Breakdown:</strong> ৳${insideDhakaPrice} for Dhaka customers (৳80 delivery) • ৳${outsideDhakaPrice} for Outside (৳130 delivery)
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- HEALTH STATUS SECTION -->
+                <div class="health-section" style="margin-top: 25px;">
                     <div>
-                        <div class="health-score" style="color:${healthColor}">${margin.toFixed(0)}%</div>
+                        <div class="health-score" style="color:${healthColor}">${margin.toFixed(1)}%</div>
                         <div style="font-size: 0.75rem; color: var(--text-dim); text-transform:uppercase; letter-spacing:1px;">Net Margin</div>
                     </div>
                     <div style="flex-grow: 1">
-                        <div style="display: flex; align-items: center; margin-bottom: 5px;">
-                            <strong style="font-size: 1.1rem;">Verdict: ${healthText}</strong>
-                            <span class="tag ${margin > 15 ? 'tag-safe' : 'tag-risk'}">${margin > 15 ? 'GREEN LIGHT' : 'ADJUST PRICING'}</span>
+                        <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                            <strong style="font-size: 1.15rem;">Verdict: ${healthText}</strong>
+                            <span class="tag ${margin > 15 ? 'tag-safe' : 'tag-risk'}">${margin > 15 ? '✅ GREEN LIGHT' : '⚠️ ADJUST PRICING'}</span>
                         </div>
-                        <p style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.4;">
+                        <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.5;">
                             ${margin > 25
-                    ? "Excellent deal. You can afford a high return (RTO) rate and still remain profitable."
-                    : "Warning: Your margins are thin. If more than 10% of customers return products, you will lose money."}
+                    ? "🎯 Excellent margins! You can handle returns and still profit. This deal has strong financial cushion."
+                    : margin > 10
+                        ? "⚠️ Moderate margins. Monitor return rates carefully. Any returns above 15% will hurt profitability."
+                        : "🚨 Thin margins! Very risky. Even small returns or unexpected costs will cause losses."}
                         </p>
                     </div>
                 </div>
 
-                <div style="margin-top: 30px;">
-                    <h3 style="font-size: 0.8rem;">Cost Breakdown (Per Unit)</h3>
-                    <div class="breakdown-item"><span>Factory Price:</span> <strong>৳${up}</strong></div>
-                    <div class="breakdown-item"><span>Shipping Cost:</span> <strong>৳${(totalShipping / qty).toFixed(0)}</strong></div>
-                    <div class="breakdown-item"><span>Marketing (Auto):</span> <strong>৳${cpa}</strong></div>
-                    <div class="breakdown-item"><span>Packaging (Auto):</span> <strong>৳${packingPerUnit.toFixed(0)}</strong></div>
+                <!-- AI INTELLIGENCE PANEL -->
+                <div style="margin-top: 30px; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1)); padding: 25px; border-radius: 20px; border: 1px solid rgba(99, 102, 241, 0.3);">
+                    <h3 style="font-size: 0.9rem; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 1.2rem;">🤖</span> AI-Powered Business Intelligence
+                    </h3>
+                    
+                    <!-- AI Score Card -->
+                    <div style="display: grid; grid-template-columns: 140px 1fr; gap: 25px; align-items: center; margin-bottom: 25px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 3rem; font-weight: 800; background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; line-height: 1;">
+                                ${aiAnalysis.opportunityScore}
+                            </div>
+                            <div style="font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-top: 5px;">AI Score</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 1.05rem; font-weight: 600; margin-bottom: 8px; color: ${aiAnalysis.scoreColor};">
+                                ${aiAnalysis.verdict}
+                            </div>
+                            <p style="font-size: 0.88rem; color: var(--text-dim); line-height: 1.6;">
+                                ${aiAnalysis.summary}
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- How AI Works - Expandable -->
+                    <details style="margin-bottom: 20px; background: rgba(0,0,0,0.15); padding: 15px; border-radius: 12px; cursor: pointer;">
+                        <summary style="font-size: 0.85rem; font-weight: 600; color: var(--primary); margin-bottom: 12px; cursor: pointer; user-select: none;">
+                            📊 How This AI Score Works (Click to Expand)
+                        </summary>
+                        <div style="padding-top: 12px; padding-left: 8px;">
+                            <p style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 15px;">
+                                The AI analyzes <strong>5 key factors</strong> specific to the Bangladesh import business environment, scoring each based on industry benchmarks from successful BD e-commerce operations:
+                            </p>
+                            
+                            <div style="background: rgba(99, 102, 241, 0.05); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #6366f1;">
+                                <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-main); margin-bottom: 5px;">
+                                    1. Profit Margin Quality (35 points max)
+                                </div>
+                                <div style="font-size: 0.78rem; color: var(--text-dim); line-height: 1.5;">
+                                    • 40%+ margin = Excellent (35 pts)<br>
+                                    • 25-39% = Good (20-28 pts)<br>
+                                    • 15-24% = Acceptable (10-18 pts)<br>
+                                    • <15% = Risky (0-5 pts)<br>
+                                    <em>Why: BD COD markets have 15-25% RTO rates. Strong margins are essential for survival.</em>
+                                </div>
+                            </div>
+
+                            <div style="background: rgba(16, 185, 129, 0.05); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #10b981;">
+                                <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-main); margin-bottom: 5px;">
+                                    2. Return on Investment (25 points max)
+                                </div>
+                                <div style="font-size: 0.78rem; color: var(--text-dim); line-height: 1.5;">
+                                    • 100%+ ROI = Outstanding (25 pts)<br>
+                                    • 60-99% = Excellent (20 pts)<br>
+                                    • 35-59% = Good (15 pts)<br>
+                                    • 20-34% = Fair (10 pts)<br>
+                                    <em>Why: BD imports compete with local alternatives. Target: 40-80% ROI for sustainable scaling.</em>
+                                </div>
+                            </div>
+
+                            <div style="background: rgba(245, 158, 11, 0.05); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #f59e0b;">
+                                <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-main); margin-bottom: 5px;">
+                                    3. Return/RTO Tolerance (20 points max)
+                                </div>
+                                <div style="font-size: 0.78rem; color: var(--text-dim); line-height: 1.5;">
+                                    • Can handle 35%+ returns = Excellent buffer (20 pts)<br>
+                                    • 25-34% returns = Strong (16 pts)<br>
+                                    • 18-24% returns = Good (12 pts)<br>
+                                    • <12% returns = High risk (0-7 pts)<br>
+                                    <em>Why: BD cash-on-delivery averages 15-25% return rates. Low buffer = high business risk.</em>
+                                </div>
+                            </div>
+
+                            <div style="background: rgba(168, 85, 247, 0.05); padding: 12px; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid #a855f7;">
+                                <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-main); margin-bottom: 5px;">
+                                    4. Pricing Efficiency (12 points max)
+                                </div>
+                                <div style="font-size: 0.78rem; color: var(--text-dim); line-height: 1.5;">
+                                    • 3.0x+ multiplier = Premium (12 pts)<br>
+                                    • 2.2-2.9x = Strong (10 pts)<br>
+                                    • 1.7-2.1x = Healthy (7 pts)<br>
+                                    • <1.5x = Tight (0-4 pts)<br>
+                                    <em>Why: Selling price vs cost ratio indicates market fitness. Optimal range: 2.0-3.0x for BD.</em>
+                                </div>
+                            </div>
+
+                            <div style="background: rgba(244, 63, 94, 0.05); padding: 12px; border-radius: 8px; border-left: 3px solid #f43f5e;">
+                                <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-main); margin-bottom: 5px;">
+                                    5. Cost Structure (8 points max)
+                                </div>
+                                <div style="font-size: 0.78rem; color: var(--text-dim); line-height: 1.5;">
+                                    • Total overhead <40% = Excellent (8 pts)<br>
+                                    • 40-55% = Acceptable (3-6 pts)<br>
+                                    • >65% = Excessive (0 pts)<br>
+                                    <em>Why: Shipping + Marketing + Packaging should be minimized for profitability. Target: <40%.</em>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 15px; padding: 12px; background: rgba(99, 102, 241, 0.08); border-radius: 8px;">
+                                <div style="font-size: 0.82rem; font-weight: 600; color: var(--primary); margin-bottom: 6px;">
+                                    📈 Final Score Interpretation
+                                </div>
+                                <div style="font-size: 0.78rem; color: var(--text-dim); line-height: 1.5;">
+                                    • 80-100: Exceptional - Green light, scale aggressively<br>
+                                    • 65-79: Strong - Proceed with confidence<br>
+                                    • 50-64: Moderate - Viable with careful execution<br>
+                                    • 30-49: High Risk - Optimization required<br>
+                                    • 0-29: Not Recommended - Major restructuring needed
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    <!-- Smart Recommendations -->
+                    <div style="background: rgba(0,0,0,0.2); padding: 20px; border-radius: 16px; margin-bottom: 20px;">
+                        <h4 style="font-size: 0.8rem; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">
+                            💡 Smart Recommendations
+                        </h4>
+                        ${aiAnalysis.recommendations.map(rec => `
+                            <div style="display: flex; gap: 12px; margin-bottom: 12px; align-items: start;">
+                                <span style="color: ${rec.type === 'success' ? 'var(--success)' : rec.type === 'warning' ? 'var(--warning)' : 'var(--danger)'}; font-size: 1.1rem; margin-top: 2px;">
+                                    ${rec.type === 'success' ? '✅' : rec.type === 'warning' ? '⚠️' : '🚨'}
+                                </span>
+                                <p style="font-size: 0.88rem; line-height: 1.6; color: var(--text-main); margin: 0;">
+                                    <strong>${rec.title}:</strong> ${rec.message}
+                                </p>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- Optimization Suggestions -->
+                    ${aiAnalysis.optimizations.length > 0 ? `
+                        <div style="background: rgba(16, 185, 129, 0.08); padding: 18px; border-radius: 14px; border: 1px solid rgba(16, 185, 129, 0.2);">
+                            <h4 style="font-size: 0.8rem; color: var(--success); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;">
+                                🎯 Optimization Opportunities
+                            </h4>
+                            ${aiAnalysis.optimizations.map(opt => `
+                                <div style="font-size: 0.88rem; color: var(--text-main); margin-bottom: 8px; padding-left: 15px; position: relative;">
+                                    <span style="position: absolute; left: 0;">→</span> ${opt}
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
                 </div>
 
-                <div style="margin-top: 25px; padding: 15px; background: rgba(255,158,11,0.1); border-radius: 12px; font-size: 0.85rem; color: var(--warning); border: 1px solid rgba(255,158,11,0.2);">
-                    <strong>💡 Intelligence Note:</strong> Total weight of your shipment is <b>${(qty * weight).toFixed(1)} KG</b>. Ensure your courier doesn't charge you based on Volumetric Weight (Size) if the box is large but light.
+                <!-- BREAK-EVEN ANALYSIS -->
+                <div style="margin-top: 30px; background: rgba(255,255,255,0.02); padding: 25px; border-radius: 20px; border: 1px solid var(--border);">
+                    <h3 style="font-size: 0.85rem; margin-bottom: 20px;">🎯 Break-Even Analysis</h3>
+                    <div class="metrics-grid-full">
+                        <div class="breakdown-item" style="border: none; padding: 8px 0;">
+                            <span>Minimum Selling Price (Break-Even):</span>
+                            <strong style="color: var(--warning); font-size: 1.1rem;">৳${breakEvenPrice.toFixed(0)}</strong>
+                        </div>
+                        <div class="breakdown-item" style="border: none; padding: 8px 0;">
+                            <span>Units Needed to Break-Even:</span>
+                            <strong style="color: var(--warning); font-size: 1.1rem;">${Math.ceil(breakEvenUnits)} units</strong>
+                        </div>
+                        <div class="breakdown-item" style="border: none; padding: 8px 0;">
+                            <span>Max Affordable Returns (Units):</span>
+                            <strong style="color: ${maxAffordableReturns > 20 ? 'var(--success)' : 'var(--danger)'}; font-size: 1.1rem;">${maxAffordableReturns} units</strong>
+                        </div>
+                        <div class="breakdown-item" style="border: none; padding: 8px 0;">
+                            <span>Max Affordable Return Rate:</span>
+                            <strong style="color: ${maxReturnRate > 20 ? 'var(--success)' : 'var(--danger)'}; font-size: 1.1rem;">${maxReturnRate.toFixed(1)}%</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- INVESTMENT BREAKDOWN WITH PERCENTAGES -->
+                <div style="margin-top: 30px;">
+                    <h3 style="font-size: 0.85rem; margin-bottom: 15px;">💼 Investment Distribution</h3>
+                    
+                    <!-- Visual Bars -->
+                    <div style="margin-bottom: 25px;">
+                        <div style="margin-bottom: 18px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+                                <span style="color: var(--text-dim);">🏭 Product Cost</span>
+                                <strong>৳${totalProductCost.toLocaleString()} (${productCostPct.toFixed(1)}%)</strong>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); border-radius: 8px; height: 8px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #6366f1, #818cf8); height: 100%; width: ${productCostPct}%; border-radius: 8px;"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 18px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+                                <span style="color: var(--text-dim);">🚚 Shipping Cost</span>
+                                <strong>৳${totalShipping.toLocaleString()} (${shippingPct.toFixed(1)}%)</strong>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); border-radius: 8px; height: 8px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #10b981, #34d399); height: 100%; width: ${shippingPct}%; border-radius: 8px;"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 18px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+                                <span style="color: var(--text-dim);">📢 Marketing Cost</span>
+                                <strong>৳${totalMarketing.toLocaleString()} (${marketingPct.toFixed(1)}%)</strong>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); border-radius: 8px; height: 8px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #f59e0b, #fbbf24); height: 100%; width: ${marketingPct}%; border-radius: 8px;"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 18px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem;">
+                                <span style="color: var(--text-dim);">📦 Packaging Cost</span>
+                                <strong>৳${totalPackaging.toLocaleString()} (${packagingPct.toFixed(1)}%)</strong>
+                            </div>
+                            <div style="background: rgba(255,255,255,0.05); border-radius: 8px; height: 8px; overflow: hidden;">
+                                <div style="background: linear-gradient(90deg, #f43f5e, #fb7185); height: 100%; width: ${packagingPct}%; border-radius: 8px;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Per-Unit Breakdown -->
+                    <h3 style="font-size: 0.85rem; margin-bottom: 15px; margin-top: 30px;">📋 Cost Breakdown (Per Unit)</h3>
+                    <div class="breakdown-item"><span>Factory Price:</span> <strong>৳${up}</strong></div>
+                    <div class="breakdown-item"><span>Shipping Cost:</span> <strong>৳${(totalShipping / qty).toFixed(0)}</strong></div>
+                    <div class="breakdown-item"><span>Marketing Cost:</span> <strong>৳${cpa}</strong></div>
+                    <div class="breakdown-item"><span>Packaging Cost:</span> <strong>৳${packingPerUnit.toFixed(0)}</strong></div>
+                    <div class="breakdown-item" style="border-bottom: none; padding-top: 15px; border-top: 2px solid rgba(99, 102, 241, 0.3);"><span style="color: var(--primary);">Total Landing Cost:</span> <strong style="color: var(--primary); font-size: 1.1rem;">৳${landingCostPerUnit.toFixed(0)}</strong></div>
+                </div>
+
+                <!-- INTELLIGENCE NOTES -->
+                <div style="margin-top: 25px; padding: 18px; background: rgba(99, 102, 241, 0.08); border-radius: 14px; font-size: 0.88rem; color: var(--text-main); border: 1px solid rgba(99, 102, 241, 0.2);">
+                    <strong>� Logistics Intelligence:</strong> Your total shipment weight is <b>${(qty * weight).toFixed(1)} KG</b>. Always confirm your courier uses <b>actual weight</b> for billing, not volumetric weight (especially for lightweight but bulky items).
+                </div>
+
+                <div style="margin-top: 15px; padding: 18px; background: ${margin < 15 ? 'rgba(244, 63, 94, 0.08)' : 'rgba(16, 185, 129, 0.08)'}; border-radius: 14px; font-size: 0.88rem; color: var(--text-main); border: 1px solid ${margin < 15 ? 'rgba(244, 63, 94, 0.2)' : 'rgba(16, 185, 129, 0.2)'};">
+                    <strong>${margin < 15 ? '⚠️ Risk Alert:' : '✅ Safety Net:'}</strong> ${margin < 15
+                    ? `With only ${margin.toFixed(1)}% margin, you can afford a maximum of <b>${maxAffordableReturns} returns</b> (${maxReturnRate.toFixed(1)}%). Any more and you'll lose money. Consider raising your selling price or reducing costs.`
+                    : `Your ${margin.toFixed(1)}% margin gives you room for up to <b>${maxAffordableReturns} returns</b> (${maxReturnRate.toFixed(1)}%) before breaking even. This is a healthy buffer for RTO scenarios.`}
                 </div>
             `;
+            // Store last calculation globally for saving
+            window.lastCalcData = { totalInvestment, totalRevenue, netProfit, margin, roi, profitPerUnit, landingCostPerUnit, maxAffordableReturns, maxReturnRate };
+        }
+
+        // ===== SAVE/COMPARE FUNCTIONALITY =====
+        let savedScenarios = JSON.parse(localStorage.getItem('importScenarios') || '[]');
+        updateSavedCount();
+
+        function saveScenario() {
+            if (!window.lastCalcData) {
+                alert('⚠️ Please run an analysis first!');
+                return;
+            }
+
+            const name = prompt('📝 Name this scenario (e.g., "Product A", "Supplier X"):');
+            if (!name || !name.trim()) {
+                alert('❌ Name is required to save!');
+                return;
+            }
+
+            const scenario = {
+                name: name.trim(),
+                timestamp: new Date().toLocaleString(),
+                inputs: {
+                    unitPrice: parseFloat(document.getElementById('unitPrice').value) || 0,
+                    quantity: parseFloat(document.getElementById('quantity').value) || 0,
+                    weight: parseFloat(document.getElementById('weight').value) || 0.5,
+                    marketPrice: parseFloat(document.getElementById('marketPrice').value) || 0,
+                    shipRate: parseFloat(document.getElementById('shipRate').value) || 750,
+                    mktIntensity: parseFloat(document.getElementById('mktIntensity').value) || 100,
+                    deliveryZone: document.getElementById('deliveryZone').value
+                },
+                results: window.lastCalcData
+            };
+
+            savedScenarios.push(scenario);
+            localStorage.setItem('importScenarios', JSON.stringify(savedScenarios));
+            updateSavedCount();
+            alert(`✅ "${name.trim()}" saved successfully!`);
+        }
+
+        function toggleComparison() {
+            const section = document.getElementById('comparisonSection');
+            if (savedScenarios.length === 0) {
+                alert('No scenarios saved yet. Click "Save This Scenario" first!');
+                return;
+            }
+
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+            if (section.style.display === 'block') {
+                renderComparison();
+            }
+        }
+
+        function renderComparison() {
+            const table = document.getElementById('comparisonTable');
+            if (savedScenarios.length === 0) {
+                table.innerHTML = '<p style="color: var(--text-dim); text-align: center; padding: 20px;">No scenarios saved.</p>';
+                return;
+            }
+
+            let html = '<div style="overflow-x: auto;"><table style="width: 100%; min-width: 900px; border-collapse: collapse; font-size: 0.85rem;"><thead><tr style="background: rgba(99, 102, 241, 0.15); border-bottom: 2px solid rgba(99, 102, 241, 0.4);">';
+            html += '<th style="padding: 12px 8px; text-align: left; font-weight: 600;">Scenario</th>';
+            html += '<th style="padding: 12px 8px; text-align: center; font-weight: 600;">Unit Price</th>';
+            html += '<th style="padding: 12px 8px; text-align: center; font-weight: 600;">Qty</th>';
+            html += '<th style="padding: 12px 8px; text-align: center; font-weight: 600;">Sell Price</th>';
+            html += '<th style="padding: 12px 8px; text-align: center; font-weight: 600;">Profit</th>';
+            html += '<th style="padding: 12px 8px; text-align: center; font-weight: 600;">Margin</th>';
+            html += '<th style="padding: 12px 8px; text-align: center; font-weight: 600;">ROI</th>';
+            html += '<th style="padding: 12px 8px; text-align: center; font-weight: 600;">Actions</th>';
+            html += '</tr></thead><tbody>';
+
+            savedScenarios.forEach((s, i) => {
+                const pColor = s.results.netProfit > 0 ? 'var(--success)' : 'var(--danger)';
+                const mColor = s.results.margin > 25 ? 'var(--success)' : s.results.margin > 15 ? 'var(--warning)' : 'var(--danger)';
+                const rColor = s.results.roi > 50 ? 'var(--success)' : s.results.roi > 20 ? 'var(--warning)' : 'var(--danger)';
+
+                html += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">`;
+                html += `<td style="padding: 12px 8px;"><strong>${s.name}</strong><br><small style="color: var(--text-dim); font-size: 0.75rem;">${s.timestamp}</small></td>`;
+                html += `<td style="padding: 12px 8px; text-align: center;">৳${s.inputs.unitPrice.toLocaleString()}</td>`;
+                html += `<td style="padding: 12px 8px; text-align: center;">${s.inputs.quantity}</td>`;
+                html += `<td style="padding: 12px 8px; text-align: center;">৳${s.inputs.marketPrice.toLocaleString()}</td>`;
+                html += `<td style="padding: 12px 8px; text-align: center; color: ${pColor}; font-weight: 600;">${s.results.netProfit > 0 ? '+' : ''}৳${Math.round(s.results.netProfit).toLocaleString()}</td>`;
+                html += `<td style="padding: 12px 8px; text-align: center; color: ${mColor}; font-weight: 600;">${s.results.margin.toFixed(1)}%</td>`;
+                html += `<td style="padding: 12px 8px; text-align: center; color: ${rColor}; font-weight: 600;">${s.results.roi.toFixed(0)}%</td>`;
+                html += `<td style="padding: 12px 8px; text-align: center;">`;
+                html += `<button onclick="loadScenario(${i})" style="padding: 6px 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600;">📂 Load</button> `;
+                html += `<button onclick="deleteScenario(${i})" style="padding: 6px 12px; background: var(--danger); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 600; margin-left: 5px;">🗑️</button>`;
+                html += `</td></tr>`;
+            });
+
+            html += '</tbody></table></div>';
+            table.innerHTML = html;
+        }
+
+        function loadScenario(index) {
+            const s = savedScenarios[index];
+            if (!s) return;
+
+            document.getElementById('unitPrice').value = s.inputs.unitPrice;
+            document.getElementById('quantity').value = s.inputs.quantity;
+            document.getElementById('weight').value = s.inputs.weight;
+            document.getElementById('marketPrice').value = s.inputs.marketPrice;
+            document.getElementById('shipRate').value = s.inputs.shipRate;
+            document.getElementById('mktIntensity').value = s.inputs.mktIntensity;
+            document.getElementById('deliveryZone').value = s.inputs.deliveryZone;
+
+            calculate();
+            document.getElementById('comparisonSection').style.display = 'none';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => alert(`✅ "${s.name}" loaded!`), 300);
+        }
+
+        function deleteScenario(index) {
+            if (confirm(`Delete "${savedScenarios[index].name}"?`)) {
+                savedScenarios.splice(index, 1);
+                localStorage.setItem('importScenarios', JSON.stringify(savedScenarios));
+                updateSavedCount();
+                renderComparison();
+            }
+        }
+
+        function clearSaved() {
+            if (confirm('Clear all saved scenarios? This cannot be undone.')) {
+                savedScenarios = [];
+                localStorage.removeItem('importScenarios');
+                updateSavedCount();
+                document.getElementById('comparisonSection').style.display = 'none';
+                alert('✅ All scenarios cleared');
+            }
+        }
+
+        function updateSavedCount() {
+            const countEl = document.getElementById('savedCount');
+            if (countEl) countEl.textContent = savedScenarios.length;
         }
     </script>
 </body>
